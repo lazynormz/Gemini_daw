@@ -168,28 +168,32 @@ pub fn parse_midi_file(data: &[u8]) -> Result<Midi, MidiParseError> {
     let amount_of_tracks = reader.read_u16_be()?;
     let time_division = reader.read_u16_be()?;
 
-    if format != 0
-    {
-        return Err(MidiParseError::InvalidFormat(format));
-    }
-
     if amount_of_tracks == 0
     {
         return Err(MidiParseError::InvalidTrackCount(amount_of_tracks));
     }
 
-    // Track parsing
-    reader.expect_bytes(b"MTrk")?;
-    let track_length = reader.read_u32_be()? as usize;
+    let mut tracks: Vec<MidiTrack> = Vec::with_capacity(amount_of_tracks as usize);
 
-    let track_end = reader.position + track_length;
-    let track = parse_midi_track(&mut reader, track_end)?;
+    for _ in 0..amount_of_tracks
+    {
+        reader.expect_bytes(b"MTrk")?;
+        let track_length = reader.read_u32_be()? as usize;
 
+        let track_end = reader.position + track_length;
+        let _track = parse_midi_track(&mut reader, track_end)?;
+
+        tracks.push(_track);
+
+        if reader.position != track_end {
+            return Err(MidiParseError::TrackLengthMismatch);
+        }
+    }
 
     // Placeholder implementation
     Ok(Midi {
         format,
-        tracks: vec![track],
+        tracks: tracks,
         time_division,
     })
 }

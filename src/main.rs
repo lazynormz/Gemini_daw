@@ -16,7 +16,7 @@ fn dump_midi(midi: &Midi) {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let midi_path = String::from("./midi files/test.mid");
+    let midi_path = String::from("./midi files/multi_track.mid");
     let midi_data = std::fs::read(midi_path)?;
 
     let _midi = parse_midi_file(&midi_data);

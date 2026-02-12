@@ -9,4 +9,5 @@ pub enum MidiParseError {
     InvalidTrackCount(u16),
     InvalidMetaLength(u8),
     RunningStatusWithoutPrevious,
+    TrackLengthMismatch,
 }
