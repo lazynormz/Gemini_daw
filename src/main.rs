@@ -24,9 +24,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match _midi {
         Ok(midi) => {
             dump_midi(&midi);
+            write_midi_file(&midi, "./midi files/test_out.mid")?;
         },
         Err(_error) => println!("Failed to parse MIDI file: {:#?}", _error),
     }
 
     Ok(())
+}
+
+fn write_midi_file(midi: &Midi, path: &str) -> std::io::Result<()> {
+    let mut writer = midi::writer::MidiWriter::new();
+    writer.write_midi(midi);
+    std::fs::write(path, writer.into_bytes())
 }
