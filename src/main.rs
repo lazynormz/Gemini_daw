@@ -1,6 +1,6 @@
-mod midi;
-use midi::model::Midi;
-use midi::parser::parse_midi_file;
+mod io;
+use io::midi::model::Midi;
+use io::midi::parser::parse_midi_file;
 
 fn dump_midi(midi: &Midi) {
     println!("MIDI Format: {}", midi.format);
@@ -25,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(midi) => {
             dump_midi(&midi);
             write_midi_file(&midi, "./midi files/test_out.mid")?;
-        },
+        }
         Err(_error) => println!("Failed to parse MIDI file: {:#?}", _error),
     }
 
@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn write_midi_file(midi: &Midi, path: &str) -> std::io::Result<()> {
-    let mut writer = midi::writer::MidiWriter::new();
+    let mut writer = io::midi::writer::MidiWriter::new();
     writer.write_midi(midi);
     std::fs::write(path, writer.into_bytes())
 }
